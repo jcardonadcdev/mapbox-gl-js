@@ -45,12 +45,18 @@ function Style(stylesheet, animationLoop) {
             return;
         }
 
-        var valid = validate(stylesheet);
+        var valid = validate(stylesheet),
+            errors = 0;
         if (valid.length) {
             for (var i = 0; i < valid.length; i++) {
-                this.fire('error', { error: new Error(valid[i].message) });
+                if (valid[i].message.indexOf("duplicate layer id") === -1) {
+                    this.fire('error', { error: new Error(valid[i].message) });
+                    errors += 1;
+                }
             }
-            return;
+            if (errors) {
+                return;
+            }
         }
 
         this._loaded = true;
